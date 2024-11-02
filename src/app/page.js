@@ -1,7 +1,7 @@
 "use client";
 
 
-import {MarketingPage} from "./marketing/page";
+import MarketingPage from "./marketing/page";
 
 const Home = () => {
   return (

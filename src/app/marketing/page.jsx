@@ -5,7 +5,7 @@ import { Example } from "./components/examples";
 import { Footer } from "@/app/aceternity/footer";
 import { NavbarDemo } from "@/app/aceternity/navbar";
 
-export const MarketingPage = () => {
+ const MarketingPage = () => {
   return (
     <>
       <NavbarDemo />
@@ -17,3 +17,5 @@ export const MarketingPage = () => {
     </>
   );
 };
+
+export default MarketingPage;
