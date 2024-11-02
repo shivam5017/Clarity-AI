@@ -17,6 +17,10 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
+    "baseUrl": "./", // Set the base URL for your imports
+    "paths": {
+      "@/*": ["src/*"] // Adjust this if your source folder is named differently
+    },
     "plugins": [
       {
         "name": "next"
