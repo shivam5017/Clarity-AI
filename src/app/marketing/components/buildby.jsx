@@ -2,8 +2,8 @@
 import { GoogleGeminiEffect } from "../../aceternity/ui/google-gemini-effect";
 import { useScroll, useTransform } from "framer-motion";
 import React from "react";
-import { CustomBtn, CustomBtnWithIcon } from "../../aceternity/button";
-import { LinkIcon } from "../../svgs/svg";
+import { CustomBtn } from "../../aceternity/button";
+
 
 export const BuildBy = () => {
   const ref = React.useRef(null);

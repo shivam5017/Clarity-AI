@@ -1,3 +1,4 @@
+"use client"
 import { PoweredBy } from "./components/poweredby";
 import { Hero } from "./components/hero";
 import { BuildBy } from "./components/buildby";
