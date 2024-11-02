@@ -1,9 +1,9 @@
 "use client";
-import { GoogleGeminiEffect } from "../aceternity/ui/google-gemini-effect";
+import { GoogleGeminiEffect } from "../../aceternity/ui/google-gemini-effect";
 import { useScroll, useTransform } from "framer-motion";
 import React from "react";
-import { CustomBtn, CustomBtnWithIcon } from "../aceternity/button";
-import { LinkIcon } from "../svgs/svg";
+import { CustomBtn, CustomBtnWithIcon } from "../../aceternity/button";
+import { LinkIcon } from "../../svgs/svg";
 
 export const BuildBy = () => {
   const ref = React.useRef(null);
@@ -34,10 +34,10 @@ export const BuildBy = () => {
       >
         <>
           <p className="text-2xl md:text-7xl font-normal pb-4 text-center bg-clip-text text-transparent bg-gradient-to-b from-neutral-100 to-neutral-300">
-            {`A product by Innovate HUB`}
+            {`A Product by Innovate HUB`}
           </p>
           <p className="text-xs md:text-xl font-normal text-center text-neutral-400 mt-4 max-w-lg mx-auto">
-            {`Thumbify: Your gateway to dynamic visuals crafted for impact.`}
+            {`Clarity AI`}
           </p>
           <div className="w-full h-[890px] -top-60 md:-top-40 flex items-center justify-center absolute ">
             <CustomBtn

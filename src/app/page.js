@@ -1,13 +1,12 @@
 "use client";
 
-import { NavbarDemo } from "./aceternity/navbar";
-import { Dashboard } from "./pages/dashboard";
+
+import {MarketingPage} from "./marketing/page";
 
 const Home = () => {
   return (
     <>
-      <NavbarDemo />
-      <Dashboard />
+      <MarketingPage />
     </>
   );
 };

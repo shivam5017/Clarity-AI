@@ -1,6 +1,6 @@
 "use client";
-import { CustomTextWithIcon } from "../aceternity/button";
-import { Vercel, AceternityUI,NextJS } from "../svgs/svg";
+import { CustomTextWithIcon } from "../../aceternity/button";
+import { Vercel, AceternityUI,NextJS } from "../../svgs/svg";
 
 export const PoweredBy = () => {
   return (
