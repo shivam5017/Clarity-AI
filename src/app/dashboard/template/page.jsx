@@ -1,4 +1,4 @@
-
+'use client'
 import { useState } from "react";
 import { IconHeart ,IconCrown} from "@tabler/icons-react";
 
