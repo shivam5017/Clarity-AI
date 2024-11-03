@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { cn } from "@/lib/utils";
-import { CustomBtnWithIcon } from "./button";
+import { CustomBtn } from "./button";
 import { Twitter } from "../svgs/svg";
 
 export function NavbarDemo() {
@@ -15,11 +15,17 @@ export function NavbarDemo() {
 function Navbar({ className }) {
   return (
     <div
-      className={cn("fixed top-4 left-0 right-0 max-w-2xl mx-auto z-50", className)}
+      className={cn(
+        "fixed top-4 left-0 right-0 max-w-2xl mx-auto z-50",
+        className
+      )}
     >
-      <div className="relative rounded-full border  bg-white border-black/[0.2] shadow-input flex justify-between items-center px-4 py-2 mx-4 sm:mx-4">
-        <h1 className="text-sm font-bold text-black ">Clarity AI</h1>
-        <CustomBtnWithIcon text={"Follow"} icon={<Twitter />} />
+      <div className="relative rounded-full border bg-white border-black/[0.2] shadow-input flex justify-between items-center px-4 py-2 mx-4 sm:mx-4">
+        <h1 className="text-sm font-bold text-black">Clarity AI</h1>
+        <div className="flex space-x-4">
+          <CustomBtn>Sign Up</CustomBtn>
+          <CustomBtn>Login</CustomBtn>
+        </div>
       </div>
     </div>
   );
