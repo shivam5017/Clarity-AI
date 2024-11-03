@@ -1,7 +1,7 @@
-'use client'
+'use client';
 
 import { useState } from "react";
-import { IconHeart ,IconCrown} from "@tabler/icons-react";
+import { IconHeart, IconCrown } from "@tabler/icons-react";
 
 const favoriteTemplatesData = [
   // Add template data here for testing, or leave empty to show "No favorites" card.
@@ -62,7 +62,7 @@ const FavoriteTemplateCard = ({ template }) => {
 const NoFavoritesCard = () => (
   <div className="bg-white shadow-lg rounded-lg p-5 mb-5 border border-gray-200 text-center">
     <h2 className="text-lg font-semibold text-gray-500">No Favorite Templates</h2>
-    <p className="text-gray-400">You haven't favorited any templates yet.</p>
+    <p className="text-gray-400">You haven&#39;t favorited any templates yet.</p>
   </div>
 );
 
