@@ -1,6 +1,6 @@
 "use client";
 import { CustomTextWithIcon } from "../../aceternity/button";
-import { Vercel, AceternityUI,NextJS } from "../../svgs/svg";
+import { Vercel, AceternityUI,NextJS,GeminiAI } from "../../svgs/svg";
 
 export const PoweredBy = () => {
   return (
@@ -24,6 +24,11 @@ export const PoweredBy = () => {
               <CustomTextWithIcon
                 text="Aceternity UI"
                 icon={<AceternityUI />}
+              />
+            </div>
+            <div className="flex items-center">
+              <CustomTextWithIcon
+                icon={<GeminiAI />}
               />
             </div>
           </div>

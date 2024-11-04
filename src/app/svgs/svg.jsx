@@ -1,6 +1,7 @@
 import AceternityIcon from "@/app/images/aceternity.svg";
 import nextjssvg from "@/app/images/nextjs.svg";
 import Image from "next/image";
+import geminisvg from "@/app/images/gemini.svg"
 
 const GitHubIcon = () => (
   <svg
@@ -74,6 +75,10 @@ const AceternityUI = () => (
   />
 );
 
+const GeminiAI=()=>(
+  <Image src={geminisvg} alt="Gemini AI Icon" width={100} height={100} priority />
+)
+
 const NextJS = () => (
   <Image src={nextjssvg} alt="Next.js Icon" width={40} height={40} priority />
 );
@@ -92,4 +97,4 @@ const LinkIcon = () => (
   </svg>
 );
 
-export { GitHubIcon, Twitter, LinkedIn, Vercel, AceternityUI, NextJS,LinkIcon };
+export { GitHubIcon, Twitter, LinkedIn, Vercel, AceternityUI, NextJS,LinkIcon ,GeminiAI};

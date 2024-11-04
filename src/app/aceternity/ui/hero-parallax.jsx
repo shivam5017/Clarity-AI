@@ -90,12 +90,11 @@ export const Header = () => {
   return (
     <div className="max-w-7xl relative mx-auto py-20 md:py-40 px-4 w-full  left-0 top-0">
       <h1 className="text-2xl md:text-7xl font-bold dark:text-white">
-        Showcase of Our AI-Powered Work
+        Explore Our Versatile AI Template Collection
       </h1>
       <p className="max-w-2xl text-base md:text-xl mt-8 dark:text-neutral-200">
-        Explore our diverse range of AI-driven tools and features designed to
-        enhance productivity, creativity, and decision-making. Each innovation
-        is crafted to empower you and transform the way you work.
+        Discover the Perfect AI Templates to Streamline Your Projects and
+        Inspire New Ideas
       </p>
     </div>
   );
