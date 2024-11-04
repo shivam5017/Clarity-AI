@@ -3,7 +3,7 @@ import React, { useContext } from "react";
 import { cn } from "@/lib/utils";
 import { CustomBtn } from "./button";
 import { useRouter } from "next/navigation";
-import { AuthContext } from "../../context/AuthContext";
+import { AuthContext } from "@/context/AuthContext";
 import Spinner from "./spinner"
 
 export function NavbarDemo() {

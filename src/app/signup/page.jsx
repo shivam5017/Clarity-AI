@@ -2,7 +2,7 @@
 
 "use client";
 import React, { useState, useContext } from "react";
-import { AuthContext } from "../../context/AuthContext";
+import { AuthContext } from "@/context/AuthContext";
 import { Label } from "../aceternity/ui/label";
 import { Input } from "../aceternity/ui/input";
 import { motion } from "framer-motion";

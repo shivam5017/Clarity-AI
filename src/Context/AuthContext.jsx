@@ -1,4 +1,3 @@
-// context/AuthContext.js
 
 "use client";
 import React, { createContext, useState, useEffect } from "react";
