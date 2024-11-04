@@ -16,7 +16,7 @@ import HistoryContent from "../history/page";
 import DashboardContent from "../dashboard/page";
 import TemplateContent from "../template/page";
 import FavTemplate from "../favtemplate/page";
-import { AuthContext } from "@/context/AuthContext"; 
+import { AuthContext } from "../../../context/AuthContext"; 
 import Spinner from "@/app/aceternity/spinner";
 
 export function SidebarDemo() {
