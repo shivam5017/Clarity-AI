@@ -1,8 +1,10 @@
 "use client";
-import React from "react";
+import React, { useContext } from "react";
 import { cn } from "@/lib/utils";
 import { CustomBtn } from "./button";
-import { Twitter } from "../svgs/svg";
+import { useRouter } from "next/navigation";
+import { AuthContext } from "@/context/AuthContext";
+import Spinner from "./spinner"
 
 export function NavbarDemo() {
   return (
@@ -13,6 +15,9 @@ export function NavbarDemo() {
 }
 
 function Navbar({ className }) {
+  const router = useRouter();
+  const { user, loading } = useContext(AuthContext);
+
   return (
     <div
       className={cn(
@@ -23,8 +28,22 @@ function Navbar({ className }) {
       <div className="relative rounded-full border bg-white border-black/[0.2] shadow-input flex justify-between items-center px-4 py-2 mx-4 sm:mx-4">
         <h1 className="text-sm font-bold text-black">Clarity AI</h1>
         <div className="flex space-x-4">
-          <CustomBtn>Sign Up</CustomBtn>
-          <CustomBtn>Login</CustomBtn>
+          {loading ? ( 
+            <div className="flex items-center h-12 justify-center">
+            <Spinner />
+          </div>
+          ) : user ? (
+            <CustomBtn onClick={() => router.push("/dashboard")}>
+              Dashboard
+            </CustomBtn>
+          ) : (
+            <>
+              <CustomBtn onClick={() => router.push("/signup")}>
+                Sign Up
+              </CustomBtn>
+              <CustomBtn onClick={() => router.push("/login")}>Login</CustomBtn>
+            </>
+          )}
         </div>
       </div>
     </div>
