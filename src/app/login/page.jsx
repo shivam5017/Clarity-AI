@@ -71,7 +71,7 @@ const Login = () => {
                     {error && <p className="text-red-500 text-sm mt-4">{error}</p>}
                 </form>
                 <div>
-                    Don't have an account? <button className="text-blue-400" onClick={()=>router.push('/signup')}>Sign Up</button>
+                    Don&apos;t have an account? <button className="text-blue-400" onClick={()=>router.push('/signup')}>Sign Up</button>
                 </div>
             </motion.div>
         </BackgroundBeamsWithCollision>

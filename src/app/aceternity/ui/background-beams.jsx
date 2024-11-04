@@ -131,7 +131,7 @@ const CollisionMechanism = React.forwardRef(({ parentRef, containerRef, beamOpti
     const animationInterval = setInterval(checkCollision, 50);
 
     return () => clearInterval(animationInterval);
-  }, [cycleCollisionDetected, containerRef]);
+  }, [cycleCollisionDetected, containerRef,parentRef]);
 
   useEffect(() => {
     if (collision.detected && collision.coordinates) {
