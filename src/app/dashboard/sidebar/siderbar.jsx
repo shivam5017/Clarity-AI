@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import { Sidebar, SidebarBody, SidebarLink } from "@/app/aceternity/ui/sidebar";
 import Dummy from "@/app/images/example.png";
 import {
@@ -14,26 +14,30 @@ import Image from "next/image";
 import { cn } from "@/lib/utils";
 import HistoryContent from "../history/page";
 import DashboardContent from "../dashboard/page";
-import TemplateContent from "../template/page"
-import FavTemplate from "../favtemplate/page"
+import TemplateContent from "../template/page";
+import FavTemplate from "../favtemplate/page";
+import { AuthContext } from "../../context/AuthContext"; 
+import Spinner from "@/app/aceternity/spinner";
 
 export function SidebarDemo() {
   const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState("dashboard"); 
-
-
+  const [selected, setSelected] = useState("dashboard");
+  const { logout, userDetails, userDetailsLoading } = useContext(AuthContext);
+  
+  const usernameDisplay = userDetailsLoading ? <Spinner />: userDetails.username || "User"
+  
   const links = [
     {
       label: "Dashboard",
       href: "#",
       icon: <IconBrandTabler className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
-      onClick: () => setSelected("dashboard"), 
+      onClick: () => setSelected("dashboard"),
     },
     {
-      label: "Histroy",
+      label: "History",
       href: "#",
       icon: <IconHistory className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
-      onClick: () => setSelected("history"), 
+      onClick: () => setSelected("history"),
     },
     {
       label: "Templates",
@@ -51,7 +55,7 @@ export function SidebarDemo() {
       label: "Logout",
       href: "#",
       icon: <IconLogout2 className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
-      onClick: () => window.location.href="/"
+      onClick: logout, // Use logout function from AuthContext
     },
   ];
 
@@ -74,7 +78,7 @@ export function SidebarDemo() {
           <div>
             <SidebarLink
               link={{
-                label: "Manu Arora",
+                label:usernameDisplay,
                 href: "#",
                 icon: (
                   <Image
@@ -124,13 +128,13 @@ const Dashboard = ({ selected }) => {
   let Content;
   if (selected === "history") {
     Content = <HistoryContent />;
-  } else if(selected==="dashboard") {
+  } else if (selected === "dashboard") {
     Content = <DashboardContent />;
-  }else if(selected==="template"){
-    Content = <TemplateContent />
-  }else(
-    Content = <FavTemplate />
-  )
+  } else if (selected === "template") {
+    Content = <TemplateContent />;
+  } else {
+    Content = <FavTemplate />;
+  }
 
   return (
     <div className="flex flex-1 h-full">
