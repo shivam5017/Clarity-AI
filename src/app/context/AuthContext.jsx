@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
   const router = useRouter();
   const [authState, setAuthState] = useState({
     user: null,
-    userDetails: {},  // Initialize as an empty object
+    userDetails: {},  
     loading: true,
     userDetailsLoading: false,
     upgradeLoading: false,

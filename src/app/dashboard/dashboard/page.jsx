@@ -1,13 +1,13 @@
-'use client'
-import React, { useContext} from "react";
+"use client";
+import React, { useContext } from "react";
 import MyAreaChart from "@/app/aceternity/ui/charts";
 import { AuthContext } from "../../context/AuthContext";
 import Spinner from "@/app/aceternity/spinner";
 
 const DashboardContent = () => {
-  const { userDetails, upgradeToPro, upgradeLoading ,userDetailsLoading} =
+  const { userDetails, upgradeToPro, upgradeLoading, userDetailsLoading } =
     useContext(AuthContext);
- 
+
   return (
     <div className="p-5 h-full overflow-y-auto">
       {/* Overview Heading */}
@@ -15,17 +15,17 @@ const DashboardContent = () => {
         <h1 className="text-2xl font-bold">Overview</h1>
 
         <div className="flex items-center space-x-4">
-        {!userDetailsLoading ? (
-          <p className="text-xl font-bold">
-            {userDetails?.isSubscribed  ? "Pro" : "Free"}
-          </p>
-        ) : (
-          <Spinner size="small" />
-        )}
+          {!userDetailsLoading ? (
+            <p className="text-xl font-bold">
+              {userDetails?.isSubscribed ? "Pro" : "Free"}
+            </p>
+          ) : (
+            <Spinner size="small" />
+          )}
           {userDetails && userDetails?.username && (
             <button
               onClick={upgradeToPro}
-              className={`px-4 py-2 rounded-lg text-white ${
+              className={`w-40 h-12 px-4 py-2 rounded-lg text-white ${
                 userDetails?.isSubscribed
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-blue-500 hover:bg-blue-700"
