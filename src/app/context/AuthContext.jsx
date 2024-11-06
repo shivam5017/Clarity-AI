@@ -23,6 +23,8 @@ export const AuthProvider = ({ children }) => {
             setUserDetails({
                 username: userData.username,
                 email: userData.email,
+                isSubscribe:userData.isSubscribed,
+                requestToken:userData.requestToken
             });
         } catch (error) {
             console.error("Failed to fetch user details:", error);
@@ -86,8 +88,55 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+  
+const upgradeToPro = async () => {
+    if (!user) return; 
+
+    try {
+        const userId = JSON.parse(atob(user.token.split(".")[1])).userId;
+        const response = await axios.put(`${api}/user/upgrade/${userId}`);
+        
+        // Update user details with new subscription and token data
+        setUserDetails((prevDetails) => ({
+            ...prevDetails,
+            isSubscribed: true,
+            requestToken: 400 
+        }));
+        
+        console.log("Pro plan activated:", response.data.message);
+    } catch (error) {
+        console.error("Upgrade to Pro failed:", error);
+    }
+};
+
+
+const ApiRequest = async () => {
+    try {
+        const response = await axios.post('/api/use-api', {
+            userId: 'user-id',             
+            apiEndpoint: 'some-endpoint',   
+            apiParams: {                   
+                param1: 'value1',
+                param2: 'value2'
+            }
+        });
+        const remainingTokens = response.data.remainingTokens;
+        console.log("API request successful, remaining tokens:", remainingTokens);
+        console.log("API Data:", response.data.data);  
+    } catch (error) {
+        if (error.response) {
+       
+            alert(error.response.data.message); 
+        } else {
+           
+            alert("An error occurred while making the request.");
+        }
+    }
+};
+
+
     return (
-        <AuthContext.Provider value={{ user, loading, userDetailsLoading, login, signup, logout, userDetails }}>
+        <AuthContext.Provider value={{ user, loading, userDetailsLoading, login, signup, logout, userDetails,upgradeToPro }}>
             {children}
         </AuthContext.Provider>
     );

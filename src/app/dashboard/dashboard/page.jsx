@@ -1,13 +1,37 @@
-import React from "react";
-import MyAreaChart from "@/app/aceternity/ui/charts"
+import React, { useContext } from "react";
+import MyAreaChart from "@/app/aceternity/ui/charts";
+import { AuthContext } from "../../context/AuthContext";
+import Spinner from "@/app/aceternity/spinner";
 
 const DashboardContent = () => {
-  
+  const { userDetails, upgradeToPro, userDetailsLoading } =
+    useContext(AuthContext);
 
   return (
     <div className="p-5 h-full overflow-y-auto">
       {/* Overview Heading */}
-      <h1 className="text-2xl font-bold mb-5">Overview</h1>
+      <div className="flex items-center justify-between mb-5">
+
+        <h1 className="text-2xl font-bold">Overview</h1>
+
+      
+        <div className="flex items-center space-x-4">
+          <p className="text-xl font-bold">
+            {userDetails.isSubscribe ? "Pro" : "Free"}
+          </p>
+          <button
+            onClick={upgradeToPro}
+            className={`px-4 py-2 rounded-lg text-white ${
+              userDetails.isSubscribe
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-blue-500 hover:bg-blue-700"
+            }`}
+            disabled={userDetails.isSubscribe === true}
+          >
+            Upgrade to Pro
+          </button>
+        </div>
+      </div>
 
       {/* Boxes Section */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-10">
@@ -35,7 +59,7 @@ const DashboardContent = () => {
           Words Generated Over Time
         </h2>
         <div className="h-64">
-        <MyAreaChart />
+          <MyAreaChart />
         </div>
       </div>
 
