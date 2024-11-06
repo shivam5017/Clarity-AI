@@ -1,35 +1,39 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import MyAreaChart from "@/app/aceternity/ui/charts";
 import { AuthContext } from "../../context/AuthContext";
 import Spinner from "@/app/aceternity/spinner";
 
 const DashboardContent = () => {
-  const { userDetails, upgradeToPro, userDetailsLoading } =
+  const { userDetails, upgradeToPro, upgradeLoading ,userDetailsLoading} =
     useContext(AuthContext);
-
+ 
   return (
     <div className="p-5 h-full overflow-y-auto">
       {/* Overview Heading */}
       <div className="flex items-center justify-between mb-5">
-
         <h1 className="text-2xl font-bold">Overview</h1>
 
-      
         <div className="flex items-center space-x-4">
+        {!userDetailsLoading ? (
           <p className="text-xl font-bold">
-            {userDetails.isSubscribe ? "Pro" : "Free"}
+            {userDetails?.isSubscribed  ? "Pro" : "Free"}
           </p>
-          <button
-            onClick={upgradeToPro}
-            className={`px-4 py-2 rounded-lg text-white ${
-              userDetails.isSubscribe
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-blue-500 hover:bg-blue-700"
-            }`}
-            disabled={userDetails.isSubscribe === true}
-          >
-            Upgrade to Pro
-          </button>
+        ) : (
+          <Spinner size="small" />
+        )}
+          {userDetails && userDetails?.username && (
+            <button
+              onClick={upgradeToPro}
+              className={`px-4 py-2 rounded-lg text-white ${
+                userDetails?.isSubscribed
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-blue-500 hover:bg-blue-700"
+              } flex items-center justify-center`}
+              disabled={userDetails?.isSubscribed || upgradeLoading}
+            >
+              {upgradeLoading ? <Spinner size="small" /> : "Upgrade to Pro"}
+            </button>
+          )}
         </div>
       </div>
 
