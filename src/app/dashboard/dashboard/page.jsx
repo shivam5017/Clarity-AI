@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext} from "react";
 import MyAreaChart from "@/app/aceternity/ui/charts";
 import { AuthContext } from "../../context/AuthContext";
 import Spinner from "@/app/aceternity/spinner";
