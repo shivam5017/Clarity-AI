@@ -1,3 +1,4 @@
+'use client'
 import React, { useContext} from "react";
 import MyAreaChart from "@/app/aceternity/ui/charts";
 import { AuthContext } from "../../context/AuthContext";
