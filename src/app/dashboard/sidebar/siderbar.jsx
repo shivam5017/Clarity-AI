@@ -24,7 +24,7 @@ export function SidebarDemo() {
   const [selected, setSelected] = useState("dashboard");
   const { logout, userDetails, userDetailsLoading } = useContext(AuthContext);
   
-  const usernameDisplay = userDetailsLoading ? <Spinner />: userDetails.username || "User"
+  const usernameDisplay = userDetailsLoading ? <Spinner />: userDetails?.username || "User"
   
   const links = [
     {
