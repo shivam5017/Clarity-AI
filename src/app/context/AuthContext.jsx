@@ -10,10 +10,12 @@ export const AuthProvider = ({ children }) => {
   const router = useRouter();
   const [authState, setAuthState] = useState({
     user: null,
+
     userDetails: {}, 
     templates: [], 
     templatesLoading: false, 
     templatesError: null, 
+
     loading: true,
     userDetailsLoading: false,
     upgradeLoading: false,
@@ -28,9 +30,11 @@ export const AuthProvider = ({ children }) => {
     updateAuthState({ userDetailsLoading: true });
     try {
       const response = await axios.get(`${api}/user/${userId}`);
+
       const { username, email, isSubscribed, requestToken, _id } = response.data.credentials;
       updateAuthState({
         userDetails: { username, email, isSubscribed, requestToken, _id },
+
       });
     } catch (error) {
       console.error("Failed to fetch user details:", error);
@@ -38,6 +42,7 @@ export const AuthProvider = ({ children }) => {
       updateAuthState({ userDetailsLoading: false });
     }
   };
+
 
   const fetchTemplates = async () => {
     const token = authState.user?.token; 
@@ -76,14 +81,19 @@ export const AuthProvider = ({ children }) => {
   };
   
 
+
+
   // Check if a token exists on initial load and set the user state
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (token) {
       const decodedToken = JSON.parse(atob(token.split(".")[1]));
       updateAuthState({ user: { token } });
+
       fetchUserDetails(decodedToken.userId).finally(() => updateAuthState({ loading: false }));
       fetchTemplates(); // Fetch templates after user details are fetched
+
+
     } else {
       updateAuthState({ loading: false });
     }
@@ -92,13 +102,17 @@ export const AuthProvider = ({ children }) => {
   // Login function to authenticate user and store the token
   const login = async (email, password) => {
     try {
+
       const response = await axios.post(`${api}/user/login`, { email, password });
+
       const token = response.data.token;
       localStorage.setItem("token", token);
       updateAuthState({ user: { token } });
       const decodedToken = JSON.parse(atob(token.split(".")[1]));
       await fetchUserDetails(decodedToken.userId);
+
       fetchTemplates(); // Fetch templates after login
+
       router.push("/dashboard");
     } catch (err) {
       throw new Error(err.response?.data?.message || "Login failed");
@@ -108,13 +122,18 @@ export const AuthProvider = ({ children }) => {
   // Signup function to register user and store the token
   const signup = async (username, email, password) => {
     try {
+
       const response = await axios.post(`${api}/user/register`, { username, email, password });
+
+
       const token = response.data.token;
       localStorage.setItem("token", token);
       updateAuthState({ user: { token } });
       const decodedToken = JSON.parse(atob(token.split(".")[1]));
       await fetchUserDetails(decodedToken.userId);
+
       fetchTemplates(); // Fetch templates after signup
+
       router.push("/dashboard");
     } catch (err) {
       throw new Error(err.response?.data?.message || "Signup failed");
@@ -127,7 +146,9 @@ export const AuthProvider = ({ children }) => {
     try {
       await axios.post(`${api}/user/logout`, { email });
       localStorage.removeItem("token");
+
       updateAuthState({ user: null, userDetails: null, templates: [] }); // Clear templates on logout
+
       router.push("/");
     } catch (error) {
       console.error("Logout failed", error);
@@ -140,6 +161,7 @@ export const AuthProvider = ({ children }) => {
 
     updateAuthState({ upgradeLoading: true });
     try {
+
       const userId = JSON.parse(atob(authState.user.token.split(".")[1])).userId;
       const token = authState.user.token;
 
@@ -151,12 +173,15 @@ export const AuthProvider = ({ children }) => {
 
       const response = await axios.put(`${api}/dashboard/upgrade/${userId}`, {}, config);
 
+
       updateAuthState({
         userDetails: {
           ...authState.userDetails,
           isSubscribed: true,
+
           requestToken: 250,
         },
+
       });
       console.log("Pro plan activated:", response.data.message);
     } catch (error) {
@@ -165,6 +190,7 @@ export const AuthProvider = ({ children }) => {
       updateAuthState({ upgradeLoading: false });
     }
   };
+
 
   const ApiRequest = async (inputText) => {
     if (!authState?.userDetails?._id) {
@@ -199,6 +225,7 @@ export const AuthProvider = ({ children }) => {
         return error.response.data.message;
       } else {
         return "An error occurred while making the request.";
+
       }
     }
   };
@@ -212,7 +239,9 @@ export const AuthProvider = ({ children }) => {
         logout,
         upgradeToPro,
         ApiRequest,
+
         fetchTemplates,  
+
       }}
     >
       {children}

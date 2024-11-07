@@ -26,6 +26,7 @@ export function SidebarDemo() {
   
   const usernameDisplay = userDetailsLoading ? <Spinner />: userDetails?.username || "User"
   
+
   const links = [
     {
       label: "Dashboard",
