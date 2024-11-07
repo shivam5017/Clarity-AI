@@ -9,9 +9,9 @@ const poppins = Poppins({
 });
 
 export const metadata = {
-  title: "Thumblify",
+  title: "Clarity AI",
   description:
-    "At Thumbify, our AI-powered tool generates eye-catching thumbnails in seconds, helping you elevate your content and increase engagement effortlessly!",
+    "Harness the power of AI with versatile tools designed to streamline your workflow and enhance your creativity.",
 };
 
 export default function RootLayout({ children }) {
