@@ -109,7 +109,7 @@ const NoFavoritesCard = () => (
   <div className="bg-white shadow-lg rounded-lg p-5 mb-5 border border-gray-200 text-center">
     <h2 className="text-xl font-semibold text-gray-700">No Templates Available</h2>
     <p className="text-gray-500">
-      You haven't added any templates yet.
+      You haven&apos;t added any templates yet.
     </p>
   </div>
 );
