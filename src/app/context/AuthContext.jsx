@@ -1,4 +1,5 @@
 "use client";
+
 import React, { createContext, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
@@ -8,33 +9,43 @@ export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const router = useRouter();
+
   const [authState, setAuthState] = useState({
     user: null,
-
-    userDetails: {}, 
-    templates: [], 
-    templatesLoading: false, 
-    templatesError: null, 
-
+    userDetails: {},
+    templates: [],
+    likedTemplates: [],
+    history: [],
     loading: true,
+    templatesLoading: false,
+    likeLoading: false,
     userDetailsLoading: false,
-    upgradeLoading: false,
+    historyLoading: false,
+    totalGeneratedWords: 0,
+    totalGeneratedWordsLoading: false,
   });
 
   const updateAuthState = (updatedValues) => {
     setAuthState((prev) => ({ ...prev, ...updatedValues }));
   };
 
-  // Fetch user details based on userId
+  
   const fetchUserDetails = async (userId) => {
     updateAuthState({ userDetailsLoading: true });
     try {
       const response = await axios.get(`${api}/user/${userId}`);
+      const {
+        username,
+        email,
+        isSubscribed,
+        requestToken,
+        _id,
+        generatedTemplateCounts,
+      } = response.data.credentials;
 
-      const { username, email, isSubscribed, requestToken, _id } = response.data.credentials;
       updateAuthState({
         userDetails: { username, email, isSubscribed, requestToken, _id },
-
+        generatedTemplateCounts: generatedTemplateCounts || [],
       });
     } catch (error) {
       console.error("Failed to fetch user details:", error);
@@ -45,145 +56,237 @@ export const AuthProvider = ({ children }) => {
 
 
   const fetchTemplates = async () => {
-    const token = authState.user?.token; 
-  
-    if (!token) {
-      console.error("No token found");
-      return;
-    }
-  
-    if (authState.templates.length > 0) return; 
-  
-    updateAuthState({ templatesLoading: true, templatesError: null });
-  
+    if (!authState.user?.token) return;
+
+    const token = authState.user.token;
+    updateAuthState({ templatesLoading: true });
+
     try {
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,  // Attach the token to the request header
-        },
-      };
-  
-      const response = await axios.get(`${api}/dashboard/templates`, config); // Add the config to the axios call
-  
-      if (response.status === 200) {
-        updateAuthState({ templates: response.data });
-      } else {
-        throw new Error("Failed to fetch templates");
-      }
+      const config = { headers: { Authorization: `Bearer ${token}` } };
+      const response = await axios.get(`${api}/dashboard/templates`, config);
+      updateAuthState({ templates: response.data });
     } catch (error) {
-      updateAuthState({
-        templatesError: error.message || "An error occurred while fetching templates",
-      });
       console.error("Error fetching templates:", error);
     } finally {
       updateAuthState({ templatesLoading: false });
     }
   };
+
+ 
+  const fetchLikedTemplates = async () => {
+    if (!authState.user || !authState.userDetails._id) return;
+
+    const token = authState.user.token;
+    updateAuthState({ likeLoading: true });
+
+    try {
+      const config = { headers: { Authorization: `Bearer ${token}` } };
+      const response = await axios.get(
+        `${api}/dashboard/liked-templates/${authState.userDetails._id}`,
+        config
+      );
+      updateAuthState({ likedTemplates: response.data });
+    } catch (error) {
+      console.error("Error fetching liked templates:", error);
+    } finally {
+      updateAuthState({ likeLoading: false });
+    }
+  };
+
+ 
+  const fetchUserHistory = async () => {
+    if (!authState.user || !authState.userDetails._id) return;
+
+    const token = authState.user.token;
+    updateAuthState({ historyLoading: true });
+
+    try {
+      const config = { headers: { Authorization: `Bearer ${token}` } };
+      const response = await axios.get(
+        `${api}/dashboard/history/${authState.userDetails._id}`,
+        config
+      );
+      updateAuthState({ history: response.data }); // Update history state
+    } catch (error) {
+      console.error("Error fetching user history:", error);
+    } finally {
+      updateAuthState({ historyLoading: false });
+    }
+  };
+
+  useEffect(() => {
+    if (authState.user && authState.userDetails._id) {
+      fetchUserHistory(); 
+    }
+  }, [authState.user, authState.userDetails]);
   
+ 
+  const likeTemplate = async (templateId) => {
+    if (!authState.user || !authState.userDetails._id || !templateId) return;
 
+    updateAuthState({ likeLoading: true });
 
+    try {
+      const token = authState.user.token;
+      const config = { headers: { Authorization: `Bearer ${token}` } };
 
-  // Check if a token exists on initial load and set the user state
+      await axios.post(
+        `${api}/dashboard/like-template`,
+        { userId: authState.userDetails._id, templateId },
+        config
+      );
+      fetchLikedTemplates(); // Refresh liked templates after the action
+    } catch (error) {
+      console.error("Error liking/unliking template:", error);
+    } finally {
+      updateAuthState({ likeLoading: false });
+    }
+  };
+
+  
+  const requestAiContent = async (apiParams, templateId) => {
+    if (!authState.user || !authState.userDetails._id) return;
+  
+    const token = authState.user.token;
+    const config = { headers: { Authorization: `Bearer ${token}` } };
+  
+    try {
+      const response = await axios.post(
+        `${api}/dashboard/gemini`,
+        {
+          userId: authState.userDetails._id,
+          apiParams,
+          templateId,
+        },
+        config
+      );
+  
+      
+      const historyEntry = {
+        userId: authState.userDetails._id,
+        templateId,
+        title: apiParams.prompt,
+        totalWords: response.data.totalTokens, 
+      };
+
+     
+      updateAuthState((prevState) => ({
+        history: [historyEntry, ...prevState.history],
+      }));
+
+      console.log("AI Response:", response);
+      return response.data;
+    } catch (error) {
+      console.error("Error calling AI API:", error);
+    }
+  };
+
+  
   useEffect(() => {
     const token = localStorage.getItem("token");
+
     if (token) {
       const decodedToken = JSON.parse(atob(token.split(".")[1]));
       updateAuthState({ user: { token } });
-
-      fetchUserDetails(decodedToken.userId).finally(() => updateAuthState({ loading: false }));
-      fetchTemplates(); // Fetch templates after user details are fetched
-
-
+      fetchUserDetails(decodedToken.userId).then(() => {
+        updateAuthState({ loading: false });
+      });
     } else {
       updateAuthState({ loading: false });
     }
   }, []);
 
-  // Login function to authenticate user and store the token
+  
+  useEffect(() => {
+    if (authState.user && authState.userDetails._id) {
+      fetchTemplates();
+      fetchLikedTemplates();
+      fetchUserHistory(); 
+    }
+  }, [authState.user, authState.userDetails]);
+
+  
   const login = async (email, password) => {
     try {
-
-      const response = await axios.post(`${api}/user/login`, { email, password });
-
+      const response = await axios.post(`${api}/user/login`, {
+        email,
+        password,
+      });
       const token = response.data.token;
       localStorage.setItem("token", token);
       updateAuthState({ user: { token } });
+
       const decodedToken = JSON.parse(atob(token.split(".")[1]));
       await fetchUserDetails(decodedToken.userId);
-
-      fetchTemplates(); // Fetch templates after login
-
       router.push("/dashboard");
-    } catch (err) {
-      throw new Error(err.response?.data?.message || "Login failed");
+    } catch (error) {
+      console.error("Login failed:", error);
+      throw new Error(error.response?.data?.message || "Login failed");
     }
   };
 
-  // Signup function to register user and store the token
+ 
   const signup = async (username, email, password) => {
     try {
-
-      const response = await axios.post(`${api}/user/register`, { username, email, password });
-
-
+      const response = await axios.post(`${api}/user/register`, {
+        username,
+        email,
+        password,
+      });
       const token = response.data.token;
       localStorage.setItem("token", token);
       updateAuthState({ user: { token } });
+
       const decodedToken = JSON.parse(atob(token.split(".")[1]));
       await fetchUserDetails(decodedToken.userId);
-
-      fetchTemplates(); // Fetch templates after signup
-
       router.push("/dashboard");
     } catch (err) {
+      console.error("Signup failed:", err);
       throw new Error(err.response?.data?.message || "Signup failed");
     }
   };
 
-  // Logout function
+  
   const logout = async () => {
-    const email = authState.user?.email;
     try {
-      await axios.post(`${api}/user/logout`, { email });
+      await axios.post(`${api}/user/logout`, { email: authState.user?.email });
       localStorage.removeItem("token");
-
-      updateAuthState({ user: null, userDetails: null, templates: [] }); // Clear templates on logout
-
+      updateAuthState({
+        user: null,
+        userDetails: {},
+        templates: [],
+        likedTemplates: [],
+        history: [],
+        totalGeneratedWords: 0
+      });
       router.push("/");
     } catch (error) {
       console.error("Logout failed", error);
     }
   };
 
-  // Upgrade to Pro plan
+
   const upgradeToPro = async () => {
     if (!authState.user) return;
 
     updateAuthState({ upgradeLoading: true });
     try {
-
-      const userId = JSON.parse(atob(authState.user.token.split(".")[1])).userId;
+      const userId = JSON.parse(
+        atob(authState.user.token.split(".")[1])
+      ).userId;
       const token = authState.user.token;
 
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,  // Attach token to headers
-        },
-      };
-
-      const response = await axios.put(`${api}/dashboard/upgrade/${userId}`, {}, config);
-
+      const config = { headers: { Authorization: `Bearer ${token}` } };
+      await axios.put(`${api}/dashboard/upgrade/${userId}`, {}, config);
 
       updateAuthState({
         userDetails: {
           ...authState.userDetails,
           isSubscribed: true,
-
-          requestToken: 250,
+          requestToken: 5000,
         },
-
       });
-      console.log("Pro plan activated:", response.data.message);
+      console.log("Pro plan activated");
     } catch (error) {
       console.error("Upgrade to Pro failed:", error);
     } finally {
@@ -191,45 +294,46 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-
-  const ApiRequest = async (inputText) => {
-    if (!authState?.userDetails?._id) {
+  const fetchTotalGeneratedWords = async (userId) => {
+    
+    if (!authState.user || !authState.user.token || authState.loading) {
+      console.error("No token or user data is loading.");
       return;
     }
-
+  
+    updateAuthState({ totalGeneratedWordsLoading: true });
+    
     try {
-      const token = authState.user.token;
-
+     
       const config = {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${authState.user.token}`,
         },
       };
-
-      const response = await axios.post(
-        `${api}/dashboard/gemini`,
-        {
-          userId: authState?.userDetails?._id,
-          apiParams: { prompt: inputText },
-        },
-        config
-      );
-
-      if (response.status === 200) {
-        return response.data.data;
-      } else {
-        return "An unexpected error occurred. Please try again.";
-      }
+  
+      const response = await axios.get(`${api}/dashboard/total-words/${userId}`, config);
+  
+      console.log(response, 'resin auth');
+      
+      
+      updateAuthState({
+        totalGeneratedWords: response?.data?.totalGeneratedWords || 0,
+      });
     } catch (error) {
-      if (error.response) {
-        return error.response.data.message;
-      } else {
-        return "An error occurred while making the request.";
-
-      }
+      console.error("Error fetching total generated words:", error);
+    } finally {
+      updateAuthState({ totalGeneratedWordsLoading: false });
     }
   };
-
+  
+  
+  useEffect(() => {
+    if (authState.user && authState.userDetails._id) {
+    
+      fetchTotalGeneratedWords(authState.userDetails._id);
+    }
+  }, [authState.user, authState.userDetails]);
+  
   return (
     <AuthContext.Provider
       value={{
@@ -238,10 +342,12 @@ export const AuthProvider = ({ children }) => {
         signup,
         logout,
         upgradeToPro,
-        ApiRequest,
-
-        fetchTemplates,  
-
+        likeTemplate,
+        fetchTemplates,
+        fetchLikedTemplates,
+        fetchUserHistory, 
+        requestAiContent,
+        fetchTotalGeneratedWords
       }}
     >
       {children}

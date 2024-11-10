@@ -14,6 +14,9 @@ module.exports = {
       screens: { sm: "100%", md: "100%", lg: "100%", xl: "1200px" },
     },
     extend: {
+      fontFamily: {
+        faculty: ['"Faculty Glyphic"', 'sans-serif'],
+      },
       animation: {
         aurora: "aurora 60s linear infinite",
         shimmer: "shimmer 2s linear infinite",

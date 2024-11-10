@@ -56,14 +56,14 @@ export function SidebarDemo() {
       label: "Logout",
       href: "#",
       icon: <IconLogout2 className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />,
-      onClick: logout, // Use logout function from AuthContext
+      onClick: logout, 
     },
   ];
 
   return (
     <div
       className={cn(
-        "rounded-md flex flex-col md:flex-row bg-gray-100 dark:bg-neutral-800 w-full h-screen flex-1 mx-auto border border-neutral-200 dark:border-neutral-700 overflow-hidden"
+        "rounded-md flex flex-col md:flex-row bg-gray-100 dark:bg-neutral-800 w-full h-screen flex-1 mx-auto border border-neutral-200 dark:border-neutral-700 overflow-hidden font-faculty"
       )}
     >
       <Sidebar open={open} setOpen={setOpen}>

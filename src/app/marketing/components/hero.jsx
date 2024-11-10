@@ -6,7 +6,7 @@ export const Hero = () => {
   return (
     <>
       <AuroraBackground>
-        <section className="relative flex flex-col container items-center justify-center h-full text-center poppins">
+        <section className="relative flex flex-col container items-center justify-center h-full text-center font-faculty">
           <div className="mb-8 ">
             <h1 className="text-2xl sm:text-6xl md:text-8xl font-bold ">
               The Ultimate Hub for All Your AI Tooling Needs!

@@ -5,7 +5,7 @@ import { Vercel, AceternityUI,NextJS,GeminiAI } from "../../svgs/svg";
 export const PoweredBy = () => {
   return (
     <>
-      <section className="relative flex flex-col container items-center justify-center h-full text-center pt-10 ">
+      <section className="relative flex flex-col container items-center justify-center h-full text-center pt-10 font-faculty">
         <div className="mb-8 ">
           <h1 className="text-xl sm:text-4xl md:text-6xl font-bold ">
             Powered by

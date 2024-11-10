@@ -21,7 +21,7 @@ function Navbar({ className }) {
   return (
     <div
       className={cn(
-        "fixed top-4 left-0 right-0 max-w-2xl mx-auto z-50",
+        "fixed top-4 left-0 right-0 max-w-2xl mx-auto z-50 font-faculty",
         className
       )}
     >

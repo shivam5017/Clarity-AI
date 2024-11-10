@@ -20,7 +20,7 @@ export const BuildBy = () => {
 
   return (
     <div
-      className="h-[400vh] bg-zinc-900 w-full dark:border dark:border-white/[0.1] rounded-none relative pt-40 overflow-clip "
+      className="h-[400vh] bg-zinc-900 w-full dark:border dark:border-white/[0.1] rounded-none relative pt-40 overflow-clip font-faculty"
       ref={ref}
     >
       <GoogleGeminiEffect
