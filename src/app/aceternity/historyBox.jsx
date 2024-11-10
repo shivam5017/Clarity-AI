@@ -1,3 +1,4 @@
+'use client'
 import React, { useContext, useEffect } from "react";
 import { AuthContext } from "@/app/context/AuthContext";
 import Spinner from "@/app/aceternity/spinner"; // Assuming you have a spinner component
