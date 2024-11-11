@@ -16,9 +16,11 @@ export const Hero = () => {
             Harness the power of AI with versatile tools designed to streamline
             your workflow and enhance your creativity.
           </p>
-          <CustomBtn>Join Community</CustomBtn>
+          <CustomBtn onClick={() => window.open('https://discord.gg/ffNcE7RS', '_blank')}>Join Community</CustomBtn>
         </section>
       </AuroraBackground>
     </>
   );
 };
+
+
