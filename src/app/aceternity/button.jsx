@@ -2,13 +2,15 @@ const CustomBtn = ({
   children,
   onClick,
   disabled,
-  textColor = "text-white", 
-  bgColor = 'bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)] '
+  textColor = "text-white",
+  bgColor = 'bg-[linear-gradient(110deg,#000103,45%,#1e2631,55%,#000103)]',
 }) => {
   return (
     <button
-      className={`inline-flex h-12 gap-2 text-sm animate-shimmer ${textColor} items-center justify-center rounded-full border-none ${bgColor} bg-[length:200%_100%] px-4 font-medium transition-colors focus:outline-none focus:ring-0 z-10`}
-      onClick={onClick}
+      className={`inline-flex ${
+        disabled ? "cursor-not-allowed" : "cursor-pointer"
+      } h-12 gap-2 text-sm animate-shimmer ${textColor} items-center justify-center rounded-full border-none ${bgColor} bg-[length:200%_100%] px-4 font-medium transition-colors focus:outline-none focus:ring-0 z-10`}
+      onClick={disabled ? undefined : onClick} // Prevents onClick from firing when disabled
       disabled={disabled}
     >
       {children}

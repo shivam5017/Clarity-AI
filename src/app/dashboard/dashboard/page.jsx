@@ -9,7 +9,7 @@ import HistoryBox from "@/app/aceternity/historyBox";
 const DashboardContent = () => {
   const { userDetails, upgradeToPro, upgradeLoading, userDetailsLoading, totalGeneratedWords, totalGeneratedWordsLoading } =
     useContext(AuthContext);
-
+ 
   return (
     <div className="p-6 h-full overflow-y-auto bg-gray-50">
       {/* Overview Heading */}
@@ -25,17 +25,7 @@ const DashboardContent = () => {
           ) : (
             <Spinner size="small" />
           )}
-          {userDetails && userDetails?.username && (
-            <button
-              onClick={upgradeToPro}
-              className={`px-5 py-2.5 rounded-lg text-white font-semibold font-faculty ${
-                userDetails?.isSubscribed ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
-              } flex items-center justify-center mt-4 sm:mt-0`}
-              disabled={userDetails?.isSubscribed || upgradeLoading}
-            >
-              {upgradeLoading ? <Spinner size="small" /> : "Upgrade to Pro"}
-            </button>
-          )}
+          
         </div>
       </div>
 

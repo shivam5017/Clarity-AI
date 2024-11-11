@@ -5,12 +5,12 @@ import { AuthContext } from "@/app/context/AuthContext"; // Importing AuthContex
 const TemplateCard = ({ template, onClick }) => {
   const { likedTemplates, likeTemplate, generatedTemplateCounts } = useContext(AuthContext); // Access context
 
-  // Find user-specific generated count for this template
+
   const userGeneratedCount = generatedTemplateCounts.find(
     (usage) => usage.templateId === template._id
   )?.generatedCount || 0;
 
-  // Check if the template is liked by the current user
+ 
   const isLiked = likedTemplates.some((likedTemplate) => likedTemplate._id === template._id);
 
   const handleLikeClick = (e) => {
@@ -21,7 +21,7 @@ const TemplateCard = ({ template, onClick }) => {
   return (
     <div
       className="bg-white dark:bg-neutral-800 shadow-lg rounded-lg p-6 mb-6 border border-gray-200 dark:border-neutral-700 transition-all hover:shadow-xl hover:scale-105 cursor-pointer font-faculty"
-      onClick={() => onClick(template)} // Trigger onClick when the card itself is clicked
+      onClick={() => onClick(template)} 
       aria-labelledby={`template-title-${template._id}`}
       aria-describedby={`template-description-${template._id}`}
     >

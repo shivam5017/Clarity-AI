@@ -5,6 +5,7 @@ import { AuthContext } from "@/app/context/AuthContext";
 import { Modal } from "@/app/aceternity/modal";
 import TemplateCard from "@/app/aceternity/TemplateCard"; 
 import Spinner from "@/app/aceternity/spinner"; 
+import UpgradeModal from "@/app/aceternity/UpgradeModal"; // Assuming you have this modal component
 
 const NoFavoritesCard = () => (
   <div className="bg-white shadow-lg rounded-lg p-5 mb-5 border border-gray-200 text-center">
@@ -19,7 +20,9 @@ const FavTemplate = () => {
   const [outputData, setOutputData] = useState(null); 
   const [error, setError] = useState(null); 
   const [loading, setLoading] = useState(false); 
-  const { likedTemplates, requestAiContent } = useContext(AuthContext); 
+  const { likedTemplates, requestAiContent, userDetails } = useContext(AuthContext); // Assuming isSubscribed is available in the context
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false); // For showing the upgrade modal
+ 
 
   const closeModal = () => {
     setSelectedTemplate(null); 
@@ -49,6 +52,17 @@ const FavTemplate = () => {
     }
   };
 
+  const handleTemplateClick = (template) => {
+   
+    if (!userDetails.isSubscribed && template.isPremium) {
+      // If the user is not subscribed and the template is premium, show the upgrade modal
+      setShowUpgradeModal(true);
+    } else {
+      // Otherwise, allow template selection
+      setSelectedTemplate(template);
+    }
+  };
+
   return (
     <section className="p-6 bg-gray-50">
       <h1 className="text-2xl sm:text-3xl font-bold mb-6 text-gray-900 font-faculty">Favorite Templates</h1>
@@ -60,7 +74,7 @@ const FavTemplate = () => {
             <TemplateCard
               key={template._id} 
               template={template}
-              onClick={() => setSelectedTemplate(template)} 
+              onClick={() => handleTemplateClick(template)} 
             />
           ))
         ) : (
@@ -79,6 +93,18 @@ const FavTemplate = () => {
           outputData={outputData} 
           error={error} 
           loading={loading} 
+        />
+      )}
+
+      {/* Show Upgrade Modal if the user tries to access a premium template */}
+      {showUpgradeModal && (
+        <UpgradeModal 
+          closeModal={() => setShowUpgradeModal(false)} 
+          onUpgrade={() => {
+            // Handle the upgrade logic here (e.g., redirect to subscription page)
+            console.log('Upgrade the user');
+            setShowUpgradeModal(false);
+          }} 
         />
       )}
     </section>

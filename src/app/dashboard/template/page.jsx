@@ -4,7 +4,9 @@ import { AuthContext } from "@/app/context/AuthContext";
 import { Modal } from "@/app/aceternity/modal";
 import Spinner from "@/app/aceternity/spinner";
 import Shimmer from "@/app/aceternity/shimmer";
-import TemplateCard from "@/app/aceternity/TemplateCard"; 
+import TemplateCard from "@/app/aceternity/TemplateCard";
+import UpgradeModal from "@/app/aceternity/UpgradeModal"; // Assuming you have an Upgrade modal component
+import SubscriptionCardModal from "@/app/aceternity/SubscriptionCardModal";
 
 const TemplateContent = () => {
   const {
@@ -12,20 +14,23 @@ const TemplateContent = () => {
     templates,
     templatesLoading,
     templatesError,
+    userDetails,
     userDetailsLoading,
     requestAiContent,
   } = useContext(AuthContext);
 
   const [selectedTemplate, setSelectedTemplate] = useState(null);
-  const [inputText, setInputText] = useState(""); 
-  const [outputData, setOutputData] = useState(null); 
-  const [error, setError] = useState(null); 
+  const [inputText, setInputText] = useState("");
+  const [outputData, setOutputData] = useState(null);
+  const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [templatesFetched, setTemplatesFetched] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [showSubscriptionModal, setShowSubscriptionModal] = useState(false);
 
   useEffect(() => {
     if (!templatesFetched && !templatesLoading) {
-      fetchTemplates(); 
+      fetchTemplates();
       setTemplatesFetched(true);
     }
   }, [templatesFetched, templatesLoading, fetchTemplates]);
@@ -38,10 +43,13 @@ const TemplateContent = () => {
 
     setLoading(true);
     try {
-      const response = await requestAiContent({ prompt: inputText, templateId });
+      const response = await requestAiContent({
+        prompt: inputText,
+        templateId,
+      });
       if (response) {
-        setOutputData(response.data); 
-        setError(null); 
+        setOutputData(response.data);
+        setError(null);
       }
     } catch (err) {
       setError("An error occurred while fetching the data.");
@@ -53,14 +61,34 @@ const TemplateContent = () => {
 
   const closeModal = () => {
     setSelectedTemplate(null);
-    setInputText(""); 
-    setOutputData(null); 
+    setInputText("");
+    setOutputData(null);
     setError(null);
+  };
+
+  const handleTemplateClick = (template) => {
+    if (!userDetails.isSubscribed && template.isPremium) {
+      // If the user is not subscribed and the template is premium, show upgrade modal
+      setShowUpgradeModal(true);
+    } else {
+      // Otherwise, allow template selection
+      setSelectedTemplate(template);
+    }
+  };
+
+  const handleUpgradeModalClose = () => {
+    // Close the Upgrade Modal
+    setShowUpgradeModal(false);
+
+    // Show SubscriptionModal after closing the UpgradeModal
+    setShowSubscriptionModal(true);
   };
 
   return (
     <section className="p-6 bg-gray-100 font-faculty">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800 dark:text-white">Available Templates</h1>
+      <h1 className="text-3xl font-bold mb-6 text-gray-800 dark:text-white">
+        Available Templates
+      </h1>
 
       {templatesLoading ? (
         <Shimmer />
@@ -75,7 +103,7 @@ const TemplateContent = () => {
                 <TemplateCard
                   key={uniqueKey}
                   template={template}
-                  onClick={() => setSelectedTemplate(template)} 
+                  onClick={() => handleTemplateClick(template)}
                 />
               );
             })
@@ -90,16 +118,29 @@ const TemplateContent = () => {
       ) : (
         selectedTemplate && (
           <Modal
-            template={selectedTemplate} 
-            closeModal={closeModal} 
-            handleApiCall={() => handleApiCall(selectedTemplate._id)} 
-            inputText={inputText} 
-            setInputText={setInputText} 
-            outputData={outputData} 
-            error={error} 
-            loading={loading} 
+            template={selectedTemplate}
+            closeModal={closeModal}
+            handleApiCall={() => handleApiCall(selectedTemplate._id)}
+            inputText={inputText}
+            setInputText={setInputText}
+            outputData={outputData}
+            error={error}
+            loading={loading}
           />
         )
+      )}
+
+      {/* Show Upgrade Modal if the user tries to access a premium template */}
+      {showUpgradeModal && (
+        <UpgradeModal
+          closeModal={() => setShowUpgradeModal(false)}
+          onUpgrade={handleUpgradeModalClose} // After upgrading, show SubscriptionModal
+        />
+      )}
+
+      {/* Show Subscription Modal after Upgrade Modal is closed */}
+      {showSubscriptionModal && (
+        <SubscriptionCardModal closeModal={() => setShowSubscriptionModal(false)} />
       )}
     </section>
   );
@@ -107,10 +148,10 @@ const TemplateContent = () => {
 
 const NoFavoritesCard = () => (
   <div className="bg-white shadow-lg rounded-lg p-5 mb-5 border border-gray-200 text-center">
-    <h2 className="text-xl font-semibold text-gray-700">No Templates Available</h2>
-    <p className="text-gray-500">
-      You haven&apos;t added any templates yet.
-    </p>
+    <h2 className="text-xl font-semibold text-gray-700">
+      No Templates Available
+    </h2>
+    <p className="text-gray-500">You haven&apos;t added any templates yet.</p>
   </div>
 );
 
