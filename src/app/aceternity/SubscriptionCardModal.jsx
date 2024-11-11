@@ -24,7 +24,6 @@ const SubscriptionCardModal = ({ closeModal }) => {
     if (!isLoggedIn) {
       router.push("/login");
     } else {
-      // Logic for upgrading to Pro
       console.log("Upgrading to Pro plan:", planId);
     }
   };

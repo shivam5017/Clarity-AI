@@ -40,24 +40,28 @@ const TemplateContent = () => {
       setError("Please provide some input text.");
       return;
     }
-
+  
     setLoading(true);
     try {
       const response = await requestAiContent({
         prompt: inputText,
         templateId,
       });
-      if (response) {
+  
+      if (response.error) {
+        setError(response.error); // Set error from the API call
+      } else {
         setOutputData(response.data);
-        setError(null);
+        setError(null); // Clear any previous errors
       }
     } catch (err) {
+      console.error("Error caught:", err);
       setError("An error occurred while fetching the data.");
-      console.error("API call failed:", err);
     } finally {
       setLoading(false);
     }
   };
+
 
   const closeModal = () => {
     setSelectedTemplate(null);

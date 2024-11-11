@@ -101,8 +101,6 @@ const FavTemplate = () => {
         <UpgradeModal 
           closeModal={() => setShowUpgradeModal(false)} 
           onUpgrade={() => {
-            // Handle the upgrade logic here (e.g., redirect to subscription page)
-            console.log('Upgrade the user');
             setShowUpgradeModal(false);
           }} 
         />

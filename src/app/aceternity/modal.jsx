@@ -1,9 +1,9 @@
-import { CustomBtn } from "@/app/aceternity/button";
-import Spinner from "@/app/aceternity/spinner";
-import Shimmer from "@/app/aceternity/shimmer";
-import { useState } from "react";
-import YoutubeHastags from "@/app/aceternity/templateFiles/youtubeHastags";
-import BlogPostTemplate from "@/app/aceternity/templateFiles/blogPosts";
+import DOMPurify from "dompurify";
+import { CustomBtn } from "./button";
+import Shimmer from "./shimmer";
+import Spinner from "./spinner";
+import YoutubeHastags from "./templateFiles/youtubeHastags";
+import BlogPostTemplate from "./templateFiles/blogPosts";
 
 export const Modal = ({
   template,
@@ -15,8 +15,12 @@ export const Modal = ({
   error,
   loading,
 }) => {
-  // State to hold the selected template
-  const [selectedTemplate, setSelectedTemplate] = useState(template);
+  const formatOutputData = (data) => {
+    if (!data) return "";
+    // Replace newline characters with <br> tags for correct spacing
+    const formattedData = data.replace(/\n/g, "<br>");
+    return DOMPurify.sanitize(formattedData);
+  };
 
   return (
     <div className="fixed inset-0 flex justify-center items-center bg-black bg-opacity-70 z-50 font-faculty">
@@ -24,7 +28,7 @@ export const Modal = ({
         {/* Heading */}
         <div className="w-full flex items-center justify-between mb-6">
           <h2 className="text-3xl font-semibold text-gray-800 dark:text-white">
-            {selectedTemplate.title}
+            {template.title}
           </h2>
           <button
             onClick={closeModal}
@@ -39,20 +43,16 @@ export const Modal = ({
           {/* Left Side (Input Section) */}
           <div className="w-full sm:w-1/2 px-4 py-6">
             <p className="text-gray-600 dark:text-neutral-300 mb-6">
-              {selectedTemplate.description}
+              {template.description}
             </p>
 
-            {/* Conditionally render inputs based on the selected template */}
-            {selectedTemplate.title === "Youtube Hashtags Finder" && (
+            {template.title === "Youtube Hashtags Finder" && (
               <YoutubeHastags setInputText={setInputText} />
             )}
 
-            {selectedTemplate.title === "Blog Post" && (
+            {template.title === "Blog Post" && (
               <BlogPostTemplate setInputText={setInputText} />
             )}
-
-            {/* Error message */}
-            {error && <p className="text-red-500 mt-4">{error}</p>}
           </div>
 
           {/* Right Side (Output Section) */}
@@ -68,20 +68,24 @@ export const Modal = ({
                   <Shimmer className="w-full h-12 mb-4" />
                 </div>
               ) : outputData ? (
-                <pre className="whitespace-pre-wrap text-sm text-gray-700 dark:text-neutral-100">
-                  {outputData}
-                </pre>
+                <div
+                  className="whitespace-pre-wrap text-sm text-gray-700 dark:text-neutral-100"
+                  dangerouslySetInnerHTML={{
+                    __html: formatOutputData(outputData),
+                  }}
+                ></div>
               ) : (
-                <p className="text-gray-500 dark:text-neutral-400">
+                <div className="text-gray-500 dark:text-neutral-400">
                   Welcome to Clarity AI
-                </p>
+                  {error && <div className="text-red-500 mt-4">{error}</div>}
+                </div>
               )}
             </div>
           </div>
         </div>
 
         {/* Submit Button at the Bottom */}
-        <div className="mt-auto  text-center">
+        <div className="mt-auto text-center">
           <CustomBtn
             onClick={handleApiCall}
             className="w-full cursor-pointer py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 focus:outline-none transition duration-200"

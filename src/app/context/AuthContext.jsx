@@ -25,6 +25,7 @@ export const AuthProvider = ({ children }) => {
     totalGeneratedWordsLoading: false,
     subscriptionPlans:[],
     subscriptionPlansLoading:false,
+    limitReachedErr:null,
   });
 
   const updateAuthState = (updatedValues) => {
@@ -212,10 +213,15 @@ export const AuthProvider = ({ children }) => {
         history: [historyEntry, ...prevState.history],
       }));
 
-      console.log("AI Response:", response);
+      
       return response.data;
     } catch (error) {
-      console.error("Error calling AI API:", error);
+      console.error("Error in requestAiContent:", error);
+      if (error.response && error.response.data && error.response.data.message) {
+        return { error: error.response.data.message }; // Make sure the error is returned
+      }
+      updateAuthState({ limitReachedErr: error.message }); // This will be used in your template content
+      return { error: 'An unexpected error occurred' };
     }
   };
 
@@ -325,7 +331,7 @@ export const AuthProvider = ({ children }) => {
           requestToken: 5000,
         },
       });
-      console.log("Pro plan activated");
+      // console.log("Pro plan activated");
     } catch (error) {
       console.error("Upgrade to Pro failed:", error);
     } finally {
@@ -352,7 +358,7 @@ export const AuthProvider = ({ children }) => {
   
       const response = await axios.get(`${api}/dashboard/total-words/${userId}`, config);
   
-      console.log(response, 'resin auth');
+    
       
       
       updateAuthState({
