@@ -23,6 +23,9 @@ export const AuthProvider = ({ children }) => {
     historyLoading: false,
     totalGeneratedWords: 0,
     totalGeneratedWordsLoading: false,
+    subscriptionPlans:[],
+    subscriptionPlansLoading:false,
+    limitReachedErr:null,
   });
 
   const updateAuthState = (updatedValues) => {
@@ -53,6 +56,42 @@ export const AuthProvider = ({ children }) => {
       updateAuthState({ userDetailsLoading: false });
     }
   };
+
+  const fetchSubscriptionPlans = async () => {
+    if (authState.subscriptionPlans.length > 0 || authState.subscriptionPlansLoading) {
+      return; // Avoid fetching if plans are already loaded or loading
+    }
+    
+    updateAuthState({ subscriptionPlansLoading: true });
+    try {
+      const response = await axios.get(`${api}/subscription/subscriptions`);
+      updateAuthState({ subscriptionPlans: response.data.plans });
+    } catch (error) {
+      console.error("Error fetching subscription plans:", error);
+    } finally {
+      updateAuthState({ subscriptionPlansLoading: false });
+    }
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      const decodedToken = JSON.parse(atob(token.split(".")[1]));
+      updateAuthState({ user: { token } });
+      fetchUserDetails(decodedToken.userId).then(() => {
+        updateAuthState({ loading: false });
+        fetchSubscriptionPlans(); // Trigger subscription plan fetch after user details are loaded
+      });
+    } else {
+      updateAuthState({ loading: false });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (authState.user && !authState.subscriptionPlans.length && !authState.subscriptionPlansLoading) {
+      fetchSubscriptionPlans();
+    }
+  }, [authState.user, authState.subscriptionPlans]);
 
 
   const fetchTemplates = async () => {
@@ -174,10 +213,15 @@ export const AuthProvider = ({ children }) => {
         history: [historyEntry, ...prevState.history],
       }));
 
-      console.log("AI Response:", response);
+      
       return response.data;
     } catch (error) {
-      console.error("Error calling AI API:", error);
+      console.error("Error in requestAiContent:", error);
+      if (error.response && error.response.data && error.response.data.message) {
+        return { error: error.response.data.message }; // Make sure the error is returned
+      }
+      updateAuthState({ limitReachedErr: error.message }); // This will be used in your template content
+      return { error: 'An unexpected error occurred' };
     }
   };
 
@@ -218,7 +262,8 @@ export const AuthProvider = ({ children }) => {
 
       const decodedToken = JSON.parse(atob(token.split(".")[1]));
       await fetchUserDetails(decodedToken.userId);
-      router.push("/dashboard");
+      router.push("/");
+     
     } catch (error) {
       console.error("Login failed:", error);
       throw new Error(error.response?.data?.message || "Login failed");
@@ -239,7 +284,7 @@ export const AuthProvider = ({ children }) => {
 
       const decodedToken = JSON.parse(atob(token.split(".")[1]));
       await fetchUserDetails(decodedToken.userId);
-      router.push("/dashboard");
+      router.push("/");
     } catch (err) {
       console.error("Signup failed:", err);
       throw new Error(err.response?.data?.message || "Signup failed");
@@ -286,7 +331,7 @@ export const AuthProvider = ({ children }) => {
           requestToken: 5000,
         },
       });
-      console.log("Pro plan activated");
+      // console.log("Pro plan activated");
     } catch (error) {
       console.error("Upgrade to Pro failed:", error);
     } finally {
@@ -313,7 +358,7 @@ export const AuthProvider = ({ children }) => {
   
       const response = await axios.get(`${api}/dashboard/total-words/${userId}`, config);
   
-      console.log(response, 'resin auth');
+    
       
       
       updateAuthState({
@@ -347,7 +392,8 @@ export const AuthProvider = ({ children }) => {
         fetchLikedTemplates,
         fetchUserHistory, 
         requestAiContent,
-        fetchTotalGeneratedWords
+        fetchTotalGeneratedWords,
+        fetchSubscriptionPlans
       }}
     >
       {children}
